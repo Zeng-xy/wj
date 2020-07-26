@@ -3,24 +3,36 @@ package com.zengxy.wj.controller;
 
 import com.zengxy.wj.pojo.Book;
 import com.zengxy.wj.service.BookService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@Api("图书馆的控制类")
+@ResponseBody
+@RequestMapping(value = "/api", produces = "application/json;charset=UTF-8")
 public class LibraryController {
     @Autowired
     BookService bookService;
 
+
     @CrossOrigin
     @GetMapping("/api/books")
+
+
+
     public List<Book> list() throws Exception {
         return bookService.list();
     }
 
     @CrossOrigin
     @PostMapping("/api/books")
+    @ApiOperation(value="书的增加或者更新", notes="书的增加或者更新")
+    @ApiImplicitParam(name = "addOrUpdate", value = "")
     public Book addOrUpdate(@RequestBody Book book) throws Exception {
         bookService.addOrUpdate(book);
         return book;
@@ -42,6 +54,18 @@ public class LibraryController {
             return list();
         }
     }
+
+    @CrossOrigin
+    @GetMapping("/api/search")
+    public List<Book> searchResult(@RequestParam("keywords") String keywords) {
+        // 关键词为空时查询出所有书籍
+        if ("".equals(keywords)) {
+            return bookService.list();
+        } else {
+            return bookService.Search(keywords);
+        }
+    }
+
 }
 
 
